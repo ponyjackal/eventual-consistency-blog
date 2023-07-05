@@ -7,6 +7,7 @@ import (
 	"github.com/ponyjackal/eventual-consistency-blog/config"
 	"github.com/ponyjackal/eventual-consistency-blog/infra/database"
 	"github.com/ponyjackal/eventual-consistency-blog/infra/logger"
+	"github.com/ponyjackal/eventual-consistency-blog/routers"
 )
 
 func main() {
@@ -23,4 +24,7 @@ func main() {
 	if err := database.DatabaseConnection(masterDSN, replicaDSN); err != nil {
 		logger.Fatalf("database DatabaseConnection error: %s", err)
 	}
+
+	router := routers.SetupRoute()
+	logger.Fatalf("%v", router.Run(config.ServerConfig()))
 }
