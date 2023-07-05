@@ -1,4 +1,4 @@
-package postKafka
+package kafkas
 
 import (
 	"context"
@@ -7,6 +7,7 @@ import (
 	"errors"
 	"io"
 	"log"
+	"os"
 	"time"
 
 	"github.com/google/uuid"
@@ -15,7 +16,6 @@ import (
 	"github.com/ponyjackal/eventual-consistency-blog/models"
 	"github.com/segmentio/kafka-go"
 	"github.com/segmentio/kafka-go/sasl/scram"
-	"gorm.io/gorm"
 )
 
 type NewPostMessage struct {
@@ -31,12 +31,15 @@ type PublishedPostMessage struct {
 type Publisher struct {
 	newPostReader 			*kafka.Reader
 	publishedPostWriter		*kafka.Writer
-	db						*gorm.DB
 }
 
 func NewPublisher() (*Publisher, func()) {
+	kafkaBrokerURL := os.Getenv("KAFKA_BROKER")
+	kafkaUsername := os.Getenv("KAFKA_USERNAME")
+	kafkaPassword := os.Getenv("KAFKA_PASSWORD")
+
 	p := &Publisher{}
-	mechanism, err := scram.Mechanism(scram.SHA256, "","")
+	mechanism, err := scram.Mechanism(scram.SHA256, kafkaUsername, kafkaPassword)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -44,13 +47,13 @@ func NewPublisher() (*Publisher, func()) {
 	// setup kafka
 	dialer := &kafka.Dialer{SASLMechanism: mechanism, TLS: &tls.Config{}}
 	p.newPostReader = kafka.NewReader(kafka.ReaderConfig{
-		Brokers: []string{""},
+		Brokers: []string{kafkaBrokerURL},
 		Topic: "app.newPosts",
 		GroupID: "service.publisher",
 		Dialer: dialer,
 	})
 	p.publishedPostWriter = kafka.NewWriter(kafka.WriterConfig{
-		Brokers: []string{""},
+		Brokers: []string{kafkaBrokerURL},
 		Topic: "app.publishedPosts",
 		Dialer: dialer,
 	})
