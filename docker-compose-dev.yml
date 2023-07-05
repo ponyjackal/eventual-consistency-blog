@@ -1,0 +1,35 @@
+version: "3.8"
+
+services:
+  postgres_db:
+    container_name: dev_pg_db
+    image: postgres:13-alpine
+    environment:
+      - POSTGRES_USER=${MASTER_DB_USER}
+      - POSTGRES_PASSWORD=${MASTER_DB_PASSWORD}
+      - POSTGRES_DB=${MASTER_DB_NAME}
+    volumes:
+      - dev_postgres_data:/var/lib/postgresql/data/
+    ports:
+      - 5432:${MASTER_DB_PORT}
+    restart: always
+
+  server:
+    container_name: dev_go_server
+    build:
+      context: .
+      dockerfile: Dockerfile-dev
+    ports:
+      - ${SERVER_PORT}:${SERVER_PORT}
+    env_file:
+      - .env
+    depends_on:
+      - postgres_db
+    links:
+      - postgres_db:postgres_db
+    volumes:
+      - .:/app
+    restart: always
+
+volumes:
+  dev_postgres_data:
