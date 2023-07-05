@@ -9,6 +9,7 @@ import (
 	"github.com/ponyjackal/eventual-consistency-blog/infra/logger"
 	"github.com/ponyjackal/eventual-consistency-blog/migrations"
 	"github.com/ponyjackal/eventual-consistency-blog/routers"
+	"github.com/ponyjackal/eventual-consistency-blog/services"
 )
 
 func main() {
@@ -27,6 +28,15 @@ func main() {
 	}
 
 	migrations.Migrate()
+
+	cm, _ := services.NewCacheManager()
+	// defer closeCacheManager()
+	p, _ := services.NewPublisher()
+	// defer closePublisher()
+
+	// run background services
+	go cm.Run()
+	go p.Run()
 
 	router := routers.SetupRoute()
 	logger.Fatalf("%v", router.Run(config.ServerConfig()))

@@ -1,4 +1,4 @@
-package cacheManagers
+package services
 
 import (
 	"context"
@@ -10,7 +10,6 @@ import (
 	"os"
 
 	"github.com/go-redis/redis/v8"
-	"github.com/ponyjackal/eventual-consistency-blog/kafkas"
 	"github.com/segmentio/kafka-go"
 	"github.com/segmentio/kafka-go/sasl/scram"
 )
@@ -61,7 +60,7 @@ func (c *CacheManager) Run() {
 			log.Fatalln(err)
 		}
 
-		var published kafkas.PublishedPostMessage
+		var published PublishedPostMessage
 		if err := json.Unmarshal(publishedPost.Value, &published); err != nil {
 			log.Printf("decoding published post error: %s\n", err.Error())
          	continue
