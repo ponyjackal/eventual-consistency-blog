@@ -1,4 +1,4 @@
-module eventual-consistency-blog
+module github.com/ponyjackal/eventual-consistency-blog
 
 go 1.20
 
