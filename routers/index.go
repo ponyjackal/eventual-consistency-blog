@@ -15,8 +15,8 @@ func RegisterRoutes(route *gin.Engine) {
 		ctx.JSON(http.StatusOK, gin.H{"live": "ok"})
 	})
 
-		/* Controllers */
-		postController := controllers.NewPostController();
+	/* Controllers */
+	postController := controllers.NewPostController();
 
 	/* post routes */
 	route.GET("/posts", postController.GetPosts)
