@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/ponyjackal/eventual-consistency-blog/routers/middleware"
 )
 
 func SetupRoute() *gin.Engine {
@@ -20,6 +21,7 @@ func SetupRoute() *gin.Engine {
 	router.SetTrustedProxies([]string{allowedHosts})
 	router.Use(gin.Logger())
 	router.Use(gin.Recovery())
+	router.Use(middleware.CORSMiddleware())
 
 	RegisterRoutes(router) // routes register
 
