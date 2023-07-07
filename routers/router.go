@@ -14,8 +14,8 @@ import (
 )
 
 func SetupRoute() *gin.Engine {
-	api, _ := services.NewAPI()
-	// defer closeAPI()
+	api, closeAPI := services.NewAPI()
+	defer closeAPI()
 	
 	environment, _ := strconv.ParseBool(os.Getenv("DEBUG"))
 	if environment {
