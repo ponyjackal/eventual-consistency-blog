@@ -15,7 +15,6 @@ import (
 
 func SetupRoute() *gin.Engine {
 	api, closeAPI := services.NewAPI()
-	defer closeAPI()
 	
 	environment, _ := strconv.ParseBool(os.Getenv("DEBUG"))
 	if environment {
@@ -30,6 +29,12 @@ func SetupRoute() *gin.Engine {
 	router.Use(gin.Logger())
 	router.Use(gin.Recovery())
 	router.Use(middleware.CORSMiddleware())
+	
+	// Middleware to close the API service after request handlers
+	router.Use(func(ctx *gin.Context) {
+		defer closeAPI()
+		ctx.Next()
+	})
 
 	// RegisterRoutes(router) // routes register
 

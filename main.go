@@ -29,10 +29,10 @@ func main() {
 
 	migrations.Migrate()
 
-	cm, closeCacheManager := services.NewCacheManager()
-	defer closeCacheManager()
-	p, closePublisher := services.NewPublisher()
-	defer closePublisher()
+	cm, _ := services.NewCacheManager()
+	// defer closeCacheManager()
+	p, _ := services.NewPublisher()
+	// defer closePublisher()
 
 	// run background services
 	go cm.Run()
@@ -40,4 +40,7 @@ func main() {
 
 	router := routers.SetupRoute()
 	logger.Fatalf("%v", router.Run(config.ServerConfig()))
+
+	// closeCacheManager()
+	// closePublisher()
 }
